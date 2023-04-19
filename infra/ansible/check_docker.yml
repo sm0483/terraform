@@ -1,0 +1,10 @@
+- hosts: all
+
+  tasks:
+     - name: Check Docker version
+       command: docker --version
+       register: docker_version
+
+     - name: Display Docker version
+       debug:
+          var: docker_version.stdout

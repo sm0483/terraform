@@ -1,0 +1,40 @@
+- hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+     - name: Install dependencies
+       apt:
+          name:
+             - apt-transport-https
+             - ca-certificates
+             - curl
+             - software-properties-common
+          update_cache: yes
+
+     - name: Add Docker GPG key
+       apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+
+     - name: Add Docker repository
+       apt_repository:
+          repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+
+     - name: Install Docker CE
+       apt:
+          name: docker-ce
+          update_cache: yes
+
+     - name: Run hello-world container
+       docker_container:
+          name: hello-world
+          image: hello-world
+
+     - name: Create docker group
+       group:
+          name: docker
+
+     - name: Add user to docker group
+       user:
+          name: "{{ ansible_user }}"
+          groups: docker
+          append: yes

@@ -1,0 +1,6 @@
+- hosts: all
+  tasks:
+     - name: Create a file named a.txt
+       file:
+          path: a.txt
+          state: touch

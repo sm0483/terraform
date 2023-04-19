@@ -1,0 +1,24 @@
+- hosts: localhost
+  tasks:
+     - name: Start Docker service
+       service:
+          name: "{{image_name}}"
+          state: started
+
+     - name: Build Docker image
+       docker_image:
+          name: "{{ repository_url }}"
+          tag: "{{image_tag}}"
+          source: build
+          build:
+             path: "{{ image_directory }}"
+             pull: yes
+
+     - name: Log in to ECR
+       command: aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ repository_url }}
+
+     - name: Push Docker image to ECR
+       docker_image:
+          name: "{{ repository_url }}"
+          tag: latest
+          push: yes
